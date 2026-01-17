@@ -1,0 +1,8 @@
+{
+  "name": "SafeDecoy - Elite Personal Security",
+  "description": "A premium, dark-themed landing page for SafeDecoy, a discreet personal security device for high-net-worth individuals.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
