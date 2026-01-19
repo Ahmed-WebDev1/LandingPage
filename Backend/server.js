@@ -1,44 +1,45 @@
-const express = require('express');
-const nodemailer = require('nodemailer');
-const bodyParser = require('body-parser');
-const cors = require('cors');
+require("dotenv").config();
+const express = require("express");
+const nodemailer = require("nodemailer");
+const cors = require("cors");
 
 const app = express();
-app.use(cors());
-app.use(bodyParser.json());
+app.use(cors({ origin: "*" }));
+app.use(express.json());
 
-// Configure your email (use Gmail for testing, or SMTP)
 const transporter = nodemailer.createTransport({
-  service: 'Gmail',
+  service: "gmail",
   auth: {
-    user: 'ahmedserpexperts@gmail.com',
-    pass: 'lpbd wwnb gjhr qhji' 
-  }
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
 });
 
-app.post('/subscribe', async (req, res) => {
+app.post("/subscribe", async (req, res) => {
   const { email } = req.body;
-
-  if (!email) return res.status(400).json({ error: 'Email is required' });
-
-  const mailOptions = {
-    from: 'ahmedserpexperts@gmail.com',
-    to: email,
-    subject: 'Newsletter Subscription Confirmation',
-    html: `
-      <h1>Welcome!</h1>
-      <p>You have successfully subscribed to our newsletter.</p>
-      <p>Stay tuned for exclusive updates and offers.</p>
-    `
-  };
+  if (!email) return res.status(400).json({ error: "Email required" });
 
   try {
-    await transporter.sendMail(mailOptions);
-    res.status(200).json({ message: 'Email sent successfully' });
+    await transporter.sendMail({
+      from: `"SafeDecoy" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "SafeDecoy – Early Access Confirmed",
+      html: `
+        <h2>Welcome to SafeDecoy</h2>
+        <p>You’re officially on the early access list.</p>
+        <p>We’ll notify you before launch.</p>
+        <br/>
+        <strong>– SafeDecoy Team</strong>
+      `,
+    });
+
+    res.json({ success: true });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to send email' });
+    res.status(500).json({ error: "Email failed" });
   }
 });
 
-app.listen(5000, () => console.log('Server running on port 5000'));
+app.listen(5000, () =>
+  console.log("✅ Server running on http://localhost:5000")
+);
